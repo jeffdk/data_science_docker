@@ -184,16 +184,22 @@ RUN usermod -l rstudio docker \
 
 ## User config and supervisord for persistant RStudio session
 COPY userconf.sh /usr/bin/userconf.sh
-COPY add-students.sh /usr/local/bin/add-students
+#COPY add-students.sh /usr/local/bin/add-students
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN mkdir -p /var/log/supervisor \
     && chgrp staff /var/log/supervisor \
     && chmod g+w /var/log/supervisor \
     && chgrp staff /etc/supervisor/conf.d/supervisord.conf
 
+
+############ User config scripts #########################
+RUN mkdir /setup
+COPY setup.sh /setup/setup.sh
+
 EXPOSE 8787
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
+CMD ["/bin/bash", "/setup/setup.sh"]
 
 
 
